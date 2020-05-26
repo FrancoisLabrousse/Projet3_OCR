@@ -19,12 +19,4 @@ public class AddFavoriteNeighbour {
     public AddFavoriteNeighbour(Neighbour neighbour){
         this.neighbour = neighbour;
     }
-
-    /**
-     * Get neighbour
-     * @return
-     */
-    public static Neighbour getFavoriteNeighbour() {
-        return neighbour;
-    }
 }
