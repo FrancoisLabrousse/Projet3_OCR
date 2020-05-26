@@ -1,4 +1,4 @@
-package com.openclassrooms.entrevoisins.ui.profil_neighbour;
+package com.openclassrooms.entrevoisins.events;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +13,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.di.DI;
-import com.openclassrooms.entrevoisins.events.AddFavoriteNeighbour;
 import com.openclassrooms.entrevoisins.model.Neighbour;
 import com.openclassrooms.entrevoisins.service.NeighbourApiService;
+import com.openclassrooms.entrevoisins.ui.neighbour_list.ListNeighbourActivity;
+
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -46,6 +47,7 @@ public class NeighbourDetails extends AppCompatActivity {
 
     private NeighbourApiService mNeighbourApiService;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,53 +58,48 @@ public class NeighbourDetails extends AppCompatActivity {
         /**
          * Retrieving profile elements via MyNeighbourRecyclerViewAdapter
          */
-            Intent intent = getIntent();
+        Intent intent = getIntent();
 
-            Neighbour neighbour = intent.getParcelableExtra("neighbour");
+        long idNeighbour = intent.getLongExtra("id", 0);
 
-            long idNeighbour = neighbour.getId();
+        String photo = intent.getStringExtra("photo");
+        Glide.with(this).load(photo).into(neighbour_image);
 
-            String photo = neighbour.getAvatarUrl();
-            Glide.with(this).load(photo).into(neighbour_image);
+        String name = intent.getStringExtra("name");
+        neighborName.setText(name);
+        neighbor_name_bis.setText(name);
+        neighbor_facebook.setText("www.facebook.fr/" + name.substring(0).toLowerCase());
 
-            String name = neighbour.getName();
-            neighborName.setText(name);
-            neighbor_name_bis.setText(name);
-            neighbor_facebook.setText("www.facebook.fr/" + name.substring(0).toLowerCase());
+        String address = intent.getStringExtra("address");
+        neighbor_address.setText(address.replaceAll(";", "à"));
 
-            String address = neighbour.getAddress();
-            neighbor_address.setText(address.replaceAll(";", "à"));
+        String phone = intent.getStringExtra("phone");
+        neighbor_phone.setText(phone);
 
-            String phone = neighbour.getPhoneNumber();
-            neighbor_phone.setText(phone);
-
-            String aboutMe = neighbour.getAboutMe();
-            neighbor_about_me.setText(aboutMe);
-
+        String aboutMe = intent.getStringExtra("aboutMe");
+        neighbor_about_me.setText(aboutMe);
 
         /**
          * Adding a neighbor in the favorites list at the click of the button
          * Creation of a new neighbor
          * Which is transmitted in AddFavoriteNeighbour
          */
-            favorite_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    Neighbour neighbourFavorite = new Neighbour(neighbour.getId(), neighbour.getName(),
-                            neighbour.getAvatarUrl(), neighbour.getAddress(), neighbour.getPhoneNumber()
-                            , neighbour.getAboutMe());
+                Neighbour neighbour = new Neighbour(idNeighbour, name, photo, address, phone, aboutMe);
 
-                    mNeighbourApiService.addNeighbourFavorite(neighbourFavorite);
+                mNeighbourApiService.addNeighbourFavorite(neighbour);
 
-                    EventBus.getDefault().post(new AddFavoriteNeighbour(neighbourFavorite));
+                EventBus.getDefault().post(new AddFavoriteNeighbour(neighbour));
 
-                    Toast.makeText(getApplicationContext(),
-                            "Ce voisin a été ajouté dans vos favoris", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),
+                        "Ce voisin a été ajouté dans vos favoris", Toast.LENGTH_SHORT).show();
 
-                }
-            });
-
+            }
+        });
         /**
          * Back button
          */
@@ -111,10 +108,13 @@ public class NeighbourDetails extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(view.getContext(), ListNeighbourActivity.class);
+                startActivity(intent);
             }
         });
+
     }
+
 }
 
 

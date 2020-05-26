@@ -16,7 +16,7 @@
             android:name=".ui.neighbour_list.AddNeighbourActivity"
             android:label="@string/activity_new_neighbour" />
         <activity
-            android:name=".ui.profil_neighbour.NeighbourDetails"
+            android:name=".events.NeighbourDetails"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <intent-filter>
             <action android:name="android.intent.action.PICK" />
