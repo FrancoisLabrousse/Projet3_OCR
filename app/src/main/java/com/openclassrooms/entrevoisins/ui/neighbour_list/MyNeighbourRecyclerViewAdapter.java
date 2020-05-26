@@ -1,6 +1,7 @@
 package com.openclassrooms.entrevoisins.ui.neighbour_list;
 
 import android.content.Intent;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,8 +16,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.openclassrooms.entrevoisins.R;
 import com.openclassrooms.entrevoisins.events.DeleteFavoriteNeighbourEvent;
 import com.openclassrooms.entrevoisins.events.DeleteNeighbourEvent;
-import com.openclassrooms.entrevoisins.events.NeighbourDetails;
 import com.openclassrooms.entrevoisins.model.Neighbour;
+import com.openclassrooms.entrevoisins.ui.profil_neighbour.NeighbourDetails;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -54,33 +55,11 @@ public class MyNeighbourRecyclerViewAdapter extends RecyclerView.Adapter<MyNeigh
         /**
          * Launch of the activity NeighbourDetails by clicking on the avatar in the list
          */
-        holder.mNeighbourAvatar.setOnClickListener(new View.OnClickListener() {
+        holder.listContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), NeighbourDetails.class);
-                intent.putExtra("id", neighbour.getId());
-                intent.putExtra("photo",neighbour.getAvatarUrl());
-                intent.putExtra("name", neighbour.getName());
-                intent.putExtra("address", neighbour.getAddress());
-                intent.putExtra("phone", neighbour.getPhoneNumber());
-                intent.putExtra("aboutMe", neighbour.getAboutMe());
-                ActivityCompat.startActivity(view.getContext(),intent,null);
-            }
-        });
-
-        /**
-         * Launch of the activity NeighbourDetails by clicking on the name in the list
-         */
-        holder.mNeighbourName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(),NeighbourDetails.class);
-                intent.putExtra("id", neighbour.getId());
-                intent.putExtra("photo",neighbour.getAvatarUrl());
-                intent.putExtra("name", neighbour.getName());
-                intent.putExtra("address", neighbour.getAddress());
-                intent.putExtra("phone", neighbour.getPhoneNumber());
-                intent.putExtra("aboutMe", neighbour.getAboutMe());
+                intent.putExtra("neighbour", neighbour);
                 ActivityCompat.startActivity(view.getContext(),intent,null);
             }
         });
@@ -102,6 +81,9 @@ public class MyNeighbourRecyclerViewAdapter extends RecyclerView.Adapter<MyNeigh
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.list_container)
+        public ConstraintLayout listContainer;
         @BindView(R.id.item_list_avatar)
         public ImageView mNeighbourAvatar;
         @BindView(R.id.item_list_name)
